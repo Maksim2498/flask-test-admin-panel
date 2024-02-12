@@ -1,0 +1,73 @@
+@import url("./object.css");
+@import url("./with-border.css");
+@import url("./button-like.css");
+
+main {
+    height: calc(100% - 5rem);
+
+    display: flex;
+    flex-direction: row-reverse;
+}
+
+main > * {
+    flex-basis: 0;
+    flex-grow: 1;
+}
+
+
+ul {
+    padding: 1.5rem;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+li {
+    list-style: none;
+    width: 100%;
+}
+
+li:not(:first-child) {
+    margin-top: 1rem;
+}
+
+
+.delete {
+    color: red;
+}
+
+
+.section {
+    margin: 0 1rem;
+    padding: 1.5rem;
+
+    width: calc(50vw - 3rem);
+    min-width: 15rem;
+    max-width: 30rem;
+}
+
+.section > * {
+    width: 100%;
+}
+
+.actions.section .actions * {
+    width: 10rem;
+}
+
+
+.user .actions {
+    margin-top: .5rem;
+}
+
+.user .actions > :not(:first-child) {
+    margin-left: .5rem;
+}
+
+.user .actions > * {
+    width: 4rem;
+}
+
+
+.no-users {
+    font-weight: bold;
+    text-align: center;
+}

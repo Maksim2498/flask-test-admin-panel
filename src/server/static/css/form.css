@@ -1,0 +1,35 @@
+@import url("./with-border.css");
+@import url("./button-like.css");
+
+body {
+    height: fit-content;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+h1 {
+    max-width: 13rem;
+}
+
+form {
+    padding: 1rem;
+}
+
+label {
+    margin-bottom: 1rem;
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+}
+
+.actions > * {
+    width: 5rem;
+}
+
+.actions :not(:first-child) {
+    margin-left: 1rem;
+}

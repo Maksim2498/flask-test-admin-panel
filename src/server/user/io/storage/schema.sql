@@ -1,0 +1,35 @@
+CREATE TABLE IF NOT EXISTS User (
+    id    INTEGER PRIMARY KEY AUTOINCREMENT,
+    login TEXT    NOT NULL,
+    name  TEXT
+);
+
+CREATE TABLE IF NOT EXISTS Moderator (
+    id INTEGER PRIMARY KEY,
+
+    FOREIGN KEY (id) REFERENCES User (id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS Admin (
+    id INTEGER PRIMARY KEY,
+
+    FOREIGN KEY (id) REFERENCES Moderator (id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS VerifiedUser (
+    id           INTEGER PRIMARY KEY AUTOINCREMENT,
+    moderator_id INTEGER NOT NULL,
+    user_login   TEXT    NOT NULL,
+
+    UNIQUE (moderator_id, user_login) ON CONFLICT REPLACE,
+
+    FOREIGN KEY (moderator_id) REFERENCES Moderator (id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS CreatedPage (
+    id       INTEGER PRIMARY KEY AUTOINCREMENT,
+    admin_id INTEGER NOT NULL,
+    name     TEXT    NOT NULL,
+
+    UNIQUE (admin_id, name) ON CONFLICT REPLACE
+);

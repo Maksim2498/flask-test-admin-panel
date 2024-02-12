@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+
+        <title>{% block title %}Admin Panel{% endblock %}</title>
+
+        {% block styles %}
+            <link rel="stylesheet" href="{{ url_for('static', filename = 'css/base.css' )}}">
+        {% endblock %}
+    </head>
+
+    <body>
+        {% block header  %}
+            <h1>Admin panel</h1>
+        {% endblock %}
+
+        {% block content %}
+        {% endblock %}
+
+        {% block footer  %}
+        {% endblock %}
+
+        {% block scripts %}
+        {% endblock %}
+    </body>
+</html>

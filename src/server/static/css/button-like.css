@@ -1,0 +1,30 @@
+button,
+.button-like {
+    display: inline-block;
+    height: 1.5rem;
+    cursor: pointer;
+    border: none;
+    border-radius: .25rem;
+    box-shadow: 1px 1px 2px gray;
+    background-color: #EEE;
+    padding: .25rem;
+    font-weight: bold;
+    text-align: center;
+    font-size: medium;
+}
+
+button:hover,
+.button-like:hover {
+    background-color: #DDD;
+}
+
+button:active,
+.button-like:active {
+    background-color: #CCC;
+    box-shadow: -1px -1px 2px gray;
+}
+
+a.button-like {
+    color: black;
+    text-decoration: none;
+}

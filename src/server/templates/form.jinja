@@ -1,0 +1,36 @@
+{% extends "base.jinja" %}
+
+{% block styles %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename = 'css/form.css'    ) }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename = 'css/messages.css') }}">
+{% endblock %}
+
+{% block header %}
+    <h1>{{ title }}</h1>
+{% endblock %}
+
+{% block content %}
+    <main>
+        {% include "messages.jinja" %}
+
+        <form class="with-border" action="{{ request.url }}" method="POST">
+            {% for attr in attrs.values() if not attr.readonly %}
+                <label>
+                    {{ attr.display_name }}
+                    <br>
+                    <input class="with-border"
+                           type="text"
+                           placeholder="{{ attr.placeholder }}"
+                           name="{{ attr.name }}"
+                           value="{{ attr.text_value }}">
+                </label>
+            {% endfor %}
+
+            <div class="actions">
+                <a class="button-like" href="{{ url_for('.index') }}">Cancel</a>
+                <input class="button-like" type="submit" value="{{ submit_text }}">
+            </div>
+        </form>
+    </main>
+{% endblock %}

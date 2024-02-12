@@ -1,0 +1,18 @@
+# App
+secret.key
+db.pickle
+db.sqlite3
+
+# VSCode
+.vscode/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# MyPy
+.mypy_cache/
+
+# MacOS
+.DS_Store

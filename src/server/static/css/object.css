@@ -1,0 +1,26 @@
+@import url("./with-border.css");
+
+.object {
+    width: 100%;
+    border-spacing: 0;
+}
+
+.object .attr .name,
+.object .attr .value {
+    padding: .25rem;
+}
+
+.object .attr:not(:last-child) .name,
+.object .attr:not(:last-child) .value {
+    border-bottom: 1px solid gray;
+}
+
+.object .attr .name {
+    font-weight: bold;
+    width: 8rem;
+}
+
+.object .attr .zero.value {
+    font-weight: bold;
+    color: gray;
+}
