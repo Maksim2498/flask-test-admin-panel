@@ -106,6 +106,42 @@ arg_parser.add_argument(
 )
 
 arg_parser.add_argument(
+  "--postgres-host",
+  default=Config.postgres_host,
+  metavar="<host>",
+  help="PostgreSQL host",
+)
+
+arg_parser.add_argument(
+  "--postgres-port",
+  default=Config.postgres_port,
+  type=int,
+  metavar="<port>",
+  help="PostgreSQL port",
+)
+
+arg_parser.add_argument(
+  "--postgres-db",
+  default=Config.postgres_db,
+  metavar="<db>",
+  help="PostgreSQL database name",
+)
+
+arg_parser.add_argument(
+  "--postgres-user",
+  default=Config.postgres_user,
+  metavar="<user>",
+  help="PostgreSQL user",
+)
+
+arg_parser.add_argument(
+  "--postgres-password",
+  default=Config.postgres_password,
+  metavar="<password>",
+  help="PostgreSQL password",
+)
+
+arg_parser.add_argument(
   "-d",
   "--debug",
   default=Config.debug,

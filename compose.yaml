@@ -1,11 +1,37 @@
 services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: admin_panel
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d admin_panel"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
   server:
-    build: .
+    build:
+      context: .
+      args:
+        POSTGRES_HOST: postgres
+        POSTGRES_PORT: 5432
+        POSTGRES_DB: admin_panel
+        POSTGRES_USER: admin
+        POSTGRES_PASSWORD: admin
     ports:
       - "8000:8000"
     volumes:
       - admin_panel_data:/app/data
+    depends_on:
+      postgres:
+        condition: service_healthy
     restart: unless-stopped
 
 volumes:
   admin_panel_data:
+  postgres_data:

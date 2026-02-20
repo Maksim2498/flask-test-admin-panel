@@ -7,7 +7,7 @@ __all__ = [
 ]
 
 
-StorageType: TypeAlias = Literal["pickle", "sqlite3"]
+StorageType: TypeAlias = Literal["pickle", "sqlite3", "postgres"]
 
 
 @dataclass
@@ -21,4 +21,9 @@ class Config:
   enabled_storages: list[str] = field(default_factory=lambda: ["pickle", "sqlite3"])
   pickle_storage_dirname: str = "db.pickle"
   sqlite3_storage_filename: str = "db.sqlite3"
+  postgres_host: str = "localhost"
+  postgres_port: int = 5432
+  postgres_db: str = "admin_panel"
+  postgres_user: str = "admin"
+  postgres_password: str = "admin"
   debug: bool = False

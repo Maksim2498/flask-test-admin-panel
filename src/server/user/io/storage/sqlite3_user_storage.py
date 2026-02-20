@@ -17,7 +17,7 @@ class Sqlite3UserStorage(Storage[User]):
 
     self.__database = database
 
-    schema_script_path = f"{dirname(__file__)}/schema.sql"
+    schema_script_path = f"{dirname(__file__)}/schema.sqlite3.sql"
     with open(schema_script_path) as f:
       schema_script = f.read()
 

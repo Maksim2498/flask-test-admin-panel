@@ -12,6 +12,7 @@ description = "Educational CRUD project with Flask"
 requires-python = ">=3.12"
 dependencies = [
   "Flask==3.0.1",
+  "psycopg[binary]>=3.2.0",
   "requests==2.31.0",
 ]
 

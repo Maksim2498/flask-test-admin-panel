@@ -20,7 +20,7 @@ It consists of the two parts:
 - [Server](./src/server/);
 - [Client](./src/client/).
 
-Server runs a RESTful API and SSR web-app. Multiple storage backends (pickle, sqlite3) can be enabled at once; each request selects one via the `storage` query parameter (API) or radio switcher (web UI).
+Server runs a RESTful API and SSR web-app. Multiple storage backends (pickle, sqlite3, postgres) can be enabled at once; each request selects one via the `storage` query parameter (API) or radio switcher (web UI).
 
 Client, in turn, provides a simple terminal-based access
 to the RESTful API provided by the server.
@@ -58,9 +58,12 @@ a list of available options with their default values and description.
 | `--secret-len`               | `int` in range [1, 2^16)  | `64`               | length of the secret key                                    |
 | `-p`, `--port`               | `int` in range [0, 2^16)  | `8000`             | port number                                                 |
 | `--host`                     | `str`                     | `"127.0.0.1"`      | host to bind to                                             |
-| `--enabled-storages`         | `str`                     | `"pickle,sqlite3"` | comma-separated list of enabled storage backends            |
-| `--pickle-storage-dirname`   | `str`                     | `"db.pickle"`      | name of the directory pickle storage uses to store database |
-| `--sqlite3-storage-filename` | `str`                     | `"db.sqlite3"`     | filename of the Sqlite3 database                            |
+| `--enabled-storages`         | `str`                     | `"pickle,sqlite3"` | comma-separated: pickle, sqlite3, postgres                  |
+| `--pickle-storage-dirname`   | `str`                     | `"db.pickle"`      | directory for pickle storage                                |
+| `--sqlite3-storage-filename` | `str`                     | `"db.sqlite3"`     | filename for SQLite3 database                               |
+| `--postgres-host`            | `str`                     | `"localhost"`      | PostgreSQL host                                             |
+| `--postgres-port`            | `int`                     | `5432`             | PostgreSQL port                                             |
+| `--postgres-db`              | `str`                     | `"admin_panel"`    | PostgreSQL database                                         |
 | `-d`, `--debug`              | -                         | -                  | enables debug mode                                          |
 
 ### Client
@@ -107,5 +110,6 @@ docker compose up -d     # build and run in background
 docker compose down      # stop and remove
 ```
 
-- **Volume** `admin_panel_data` — сохраняет `secret.key` и `db.sqlite3` между перезапусками
-- **Порт** 8000 — веб-интерфейс: <http://localhost:8000>, API: <http://localhost:8000/api>
+- **Volumes**: `admin_panel_data` (secrets, pickle, sqlite3), `postgres_data` (PostgreSQL)
+- **Port** 8000 — web: <http://localhost:8000>, API: <http://localhost:8000/api>
+- **PostgreSQL** 17 Alpine — user: admin, password: admin, DB: admin_panel

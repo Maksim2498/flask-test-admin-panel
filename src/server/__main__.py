@@ -13,7 +13,7 @@ from .blueprint.web import create_blueprint as create_web_blueprint
 from .config import Config
 from .io.storage import PickleStorage
 from .multi_user_manager import MultiUserManager
-from .user.io.storage import Sqlite3UserStorage
+from .user.io.storage import PostgresUserStorage, Sqlite3UserStorage
 
 
 def create_config(args: Sequence[str] = sys.argv[1:]) -> Config:
@@ -21,8 +21,17 @@ def create_config(args: Sequence[str] = sys.argv[1:]) -> Config:
   args_dict = dict(parsed_args.__dict__)
   enabled_str = args_dict.pop("enabled_storages", "pickle,sqlite3")
   args_dict["enabled_storages"] = [s.strip() for s in str(enabled_str).split(",") if s.strip()]
+
   config = Config(**args_dict)
   return config
+
+
+def _postgres_conninfo(config: Config) -> str:
+  return (
+    f"host={config.postgres_host} port={config.postgres_port} "
+    f"dbname={config.postgres_db} user={config.postgres_user} "
+    f"password={config.postgres_password}"
+  )
 
 
 def create_storage(config: Config, storage_type: str) -> Storage[User]:
@@ -31,6 +40,8 @@ def create_storage(config: Config, storage_type: str) -> Storage[User]:
       return PickleStorage(config.pickle_storage_dirname)
     case "sqlite3":
       return Sqlite3UserStorage(config.sqlite3_storage_filename)
+    case "postgres":
+      return PostgresUserStorage(_postgres_conninfo(config))
     case _:
       raise ValueError(f"Unknown storage type: {storage_type}")
 
