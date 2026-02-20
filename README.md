@@ -7,8 +7,7 @@
 - [Requirements](#requirements);
 - [Running](#running);
 - [Development](#development);
-  - [Server](#server);
-  - [Client](#client).
+- [Docker](#docker).
 
 ## About
 
@@ -58,6 +57,7 @@ a list of available options with their default values and description.
 | `--secret-filename`          | `str`                     | `"secret.key"` | filename of the secret key                                  |
 | `--secret-len`               | `int` in range [1, 2^16)  | `64`           | length of the secret key                                    |
 | `-p`, `--port`               | `int` in range [0, 2^16)  | `8000`         | port number                                                 |
+| `--host`                     | `str`                     | `"127.0.0.1"`  | host to bind to                                             |
 | `-s`, `--storage-type`       | `"pickle"` or `"sqlite3"` | `"pickle"`     | type of the storage to be used                              |
 | `--pickle-storage-dirname`   | `str`                     | `"db.pickle"`  | name of the directory pickle storage uses to store database |
 | `--sqlite3-storage-filename` | `str`                     | `"db.sqlite3"` | filename of the Sqlite3 database                            |
@@ -99,3 +99,13 @@ ruff check src/          # run linter
 ruff format src/         # format code
 ruff check src/ --fix    # auto-fix lint issues
 ```
+
+## Docker
+
+```bash
+docker compose up -d     # build and run in background
+docker compose down      # stop and remove
+```
+
+- **Volume** `admin_panel_data` — сохраняет `secret.key` и `db.sqlite3` между перезапусками
+- **Порт** 8000 — веб-интерфейс: <http://localhost:8000>, API: <http://localhost:8000/api>

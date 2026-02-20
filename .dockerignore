@@ -1,0 +1,16 @@
+.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+.git/
+.gitignore
+.vscode/
+.DS_Store
+*.md
+!README.md
+db.pickle/
+db.sqlite3
+secret.key

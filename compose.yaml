@@ -1,0 +1,11 @@
+services:
+  server:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - admin_panel_data:/app/data
+    restart: unless-stopped
+
+volumes:
+  admin_panel_data:

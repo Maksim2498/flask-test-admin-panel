@@ -1,6 +1,13 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
 [project]
 name = "admin-panel"
-version = "0.1.0"
+version = "1.0.0"
 description = "Educational CRUD project with Flask"
 requires-python = ">=3.12"
 dependencies = [
@@ -21,21 +28,21 @@ src = ["src"]
 
 [tool.ruff.lint]
 select = [
-    "E",      # pycodestyle errors
-    "W",      # pycodestyle warnings
-    "F",      # Pyflakes
-    "I",      # isort
-    "B",      # flake8-bugbear
-    "UP",     # pyupgrade
+  "E",      # pycodestyle errors
+  "W",      # pycodestyle warnings
+  "F",      # Pyflakes
+  "I",      # isort
+  "B",      # flake8-bugbear
+  "UP",     # pyupgrade
 ]
 ignore = [
-    "E501",   # line too long (handled by formatter)
-    "F401",   # unused imports (often intentional in __init__.py)
-    "F403",   # import * (used for package re-exports)
-    "C417",   # unnecessary map (style preference)
-    "UP040",  # TypeAlias vs type keyword
-    "UP046",  # Generic vs type parameters
-    "UP047",  # generic type parameters
+  "E501",   # line too long (handled by formatter)
+  "F401",   # unused imports (often intentional in __init__.py)
+  "F403",   # import * (used for package re-exports)
+  "C417",   # unnecessary map (style preference)
+  "UP040",  # TypeAlias vs type keyword
+  "UP046",  # Generic vs type parameters
+  "UP047",  # generic type parameters
 ]
 
 [tool.ruff.format]
