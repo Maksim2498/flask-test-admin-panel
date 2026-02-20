@@ -6,7 +6,8 @@ import requests
 from client.error import BadStatusCodeError
 from client.util import validate_json
 from common.io.storage import Storage
-from common.user import Admin, Moderator, User
+from common.user import User
+from common.user.user_json import user_from_dict
 
 __all__ = ["RestUserStorage"]
 
@@ -54,9 +55,6 @@ class RestUserStorage(Storage[User]):
 
     Schema = ErrorSchema | SuccessSchema
 
-    # Python typing system works strange
-    # when generics meat union typings
-    # so some casts are needed
     json = res.json()
     json = cast(ErrorSchema | SuccessSchema, validate_json(json, cast(Any, Schema)))
     error = json.get("error")
@@ -116,7 +114,7 @@ class RestUserStorage(Storage[User]):
     json = res.json()
     json = validate_json(json, list[RestUserStorage.__AnyUserSchema])
 
-    return map(RestUserStorage.__json_to_user, json)
+    return map(lambda row: user_from_dict(dict(row)), json)
 
   @override
   def load(self, user_id: int) -> User | None:
@@ -131,32 +129,7 @@ class RestUserStorage(Storage[User]):
     json = res.json()
     json = validate_json(json, cast(Any, RestUserStorage.__AnyUserSchema))
 
-    return RestUserStorage.__json_to_user(json)
-
-  @staticmethod
-  def __json_to_user(json: __AnyUserSchema) -> User:
-    role = json["role"]
-
-    if role == "user":
-      user = User()
-    elif role == "moderator":
-      user = Moderator()
-    elif role == "admin":
-      user = Admin()
-    else:
-      raise ValueError(f"Bad role: {repr(role)}")
-
-    user._id = json["id"]
-    user.login = json["login"]
-    user.name = json["name"]
-
-    if isinstance(user, Moderator):
-      user.verified_users = cast(Any, json)["verified_users"]
-
-    if isinstance(user, Admin):
-      user.created_pages = cast(Any, json)["created_pages"]
-
-    return user
+    return user_from_dict(dict(json))
 
   @override
   def load_all_ids(self) -> Iterable[int]:

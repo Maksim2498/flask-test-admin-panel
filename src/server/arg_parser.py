@@ -88,7 +88,7 @@ arg_parser.add_argument(
   "--enabled-storages",
   default="pickle,sqlite3",
   metavar="<pickle,sqlite3>",
-  help="comma-separated list of enabled storage backends (default: pickle,sqlite3)",
+  help="comma-separated list of enabled storage backends (default: pickle,sqlite3; may include rabbitmq)",
 )
 
 arg_parser.add_argument(
@@ -139,6 +139,64 @@ arg_parser.add_argument(
   default=Config.postgres_password,
   metavar="<password>",
   help="PostgreSQL password",
+)
+
+arg_parser.add_argument(
+  "--mongodb-host",
+  default=Config.mongodb_host,
+  metavar="<host>",
+  help="MongoDB host",
+)
+
+arg_parser.add_argument(
+  "--mongodb-port",
+  default=Config.mongodb_port,
+  type=int,
+  metavar="<port>",
+  help="MongoDB port",
+)
+
+arg_parser.add_argument(
+  "--mongodb-db",
+  default=Config.mongodb_db,
+  metavar="<db>",
+  help="MongoDB database name",
+)
+
+arg_parser.add_argument(
+  "--mongodb-user",
+  default=Config.mongodb_user,
+  metavar="<user>",
+  help="MongoDB user",
+)
+
+arg_parser.add_argument(
+  "--mongodb-password",
+  default=Config.mongodb_password,
+  metavar="<password>",
+  help="MongoDB password",
+)
+
+arg_parser.add_argument(
+  "--rabbitmq-url",
+  default=Config.rabbitmq_url,
+  metavar="<amqp url>",
+  help="RabbitMQ AMQP URL for rabbitmq storage backend",
+)
+
+arg_parser.add_argument(
+  "--rabbitmq-rpc-queue",
+  default=Config.rabbitmq_rpc_queue,
+  metavar="<queue>",
+  help="RPC queue name (must match storage_worker --rpc-queue)",
+)
+
+arg_parser.add_argument(
+  "--rabbitmq-rpc-timeout",
+  default=Config.rabbitmq_rpc_timeout,
+  type=float,
+  metavar="<seconds>",
+  help="RPC call timeout for rabbitmq storage",
 )
 
 arg_parser.add_argument(

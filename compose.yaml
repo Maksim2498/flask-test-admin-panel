@@ -1,4 +1,32 @@
 services:
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+
+  mongodb:
+    image: mongo:7
+    volumes:
+      - mongodb_data:/data/db
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
   postgres:
     image: postgres:17-alpine
     environment:
@@ -14,6 +42,27 @@ services:
       timeout: 5s
       retries: 5
 
+  storage_worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
+    command:
+      - python
+      - -m
+      - storage_worker
+      - --rabbitmq-url
+      - amqp://guest:guest@rabbitmq:5672/
+      - --internal-storage
+      - pickle
+      - --pickle-storage-dirname
+      - /app/data/rpc_pickle
+    volumes:
+      - admin_panel_data:/app/data
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    restart: unless-stopped
+
   server:
     build:
       context: .
@@ -23,15 +72,32 @@ services:
       POSTGRES_DB: admin_panel
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin
+      MONGODB_HOST: mongodb
+      MONGODB_PORT: 27017
+      MONGODB_DB: admin_panel
+      MONGODB_USER: ""
+      MONGODB_PASSWORD: ""
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672/
+      RABBITMQ_RPC_QUEUE: admin_panel.user.storage.rpc
+      RABBITMQ_RPC_TIMEOUT: "30"
+      ENABLED_STORAGES: "pickle,sqlite3,postgres,mongodb,rabbitmq"
     ports:
       - "8000:8000"
     volumes:
       - admin_panel_data:/app/data
     depends_on:
+      rabbitmq:
+        condition: service_healthy
+      storage_worker:
+        condition: service_started
+      mongodb:
+        condition: service_healthy
       postgres:
         condition: service_healthy
     restart: unless-stopped
 
 volumes:
   admin_panel_data:
+  mongodb_data:
   postgres_data:
+  rabbitmq_data:

@@ -7,7 +7,7 @@ __all__ = [
 ]
 
 
-StorageType: TypeAlias = Literal["pickle", "sqlite3", "postgres"]
+StorageType: TypeAlias = Literal["pickle", "sqlite3", "postgres", "mongodb", "rabbitmq"]
 
 
 @dataclass
@@ -26,4 +26,12 @@ class Config:
   postgres_db: str = "admin_panel"
   postgres_user: str = "admin"
   postgres_password: str = "admin"
+  mongodb_host: str = "localhost"
+  mongodb_port: int = 27017
+  mongodb_db: str = "admin_panel"
+  mongodb_user: str = ""
+  mongodb_password: str = ""
+  rabbitmq_url: str = "amqp://guest:guest@localhost:5672/"
+  rabbitmq_rpc_queue: str = "admin_panel.user.storage.rpc"
+  rabbitmq_rpc_timeout: float = 30.0
   debug: bool = False
