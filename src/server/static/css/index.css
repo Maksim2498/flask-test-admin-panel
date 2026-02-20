@@ -49,6 +49,18 @@ li:not(:first-child) {
     width: 100%;
 }
 
+.storage-switcher {
+    display: flex;
+    gap: 1rem;
+}
+
+.storage-switcher label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+}
+
 .actions.section .actions * {
     width: 10rem;
 }

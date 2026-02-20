@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Literal, TypeAlias
 
 __all__ = [
@@ -18,7 +18,7 @@ class Config:
   secret_len: int = 64
   port: int = 8000
   host: str = "127.0.0.1"
-  storage_type: StorageType = "pickle"
+  enabled_storages: list[str] = field(default_factory=lambda: ["pickle", "sqlite3"])
   pickle_storage_dirname: str = "db.pickle"
   sqlite3_storage_filename: str = "db.sqlite3"
   debug: bool = False

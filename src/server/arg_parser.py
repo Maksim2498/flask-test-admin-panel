@@ -85,11 +85,10 @@ arg_parser.add_argument(
 )
 
 arg_parser.add_argument(
-  "-s",
-  "--storage-type",
-  default=Config.storage_type,
-  choices=["pickle", "sqlite3"],
-  help=f"type of the storage to be used (default value is {repr(Config.storage_type)})",
+  "--enabled-storages",
+  default="pickle,sqlite3",
+  metavar="<pickle,sqlite3>",
+  help="comma-separated list of enabled storage backends (default: pickle,sqlite3)",
 )
 
 arg_parser.add_argument(

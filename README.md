@@ -20,7 +20,7 @@ It consists of the two parts:
 - [Server](./src/server/);
 - [Client](./src/client/).
 
-Server runs a RESTful API and SSR web-app.
+Server runs a RESTful API and SSR web-app. Multiple storage backends (pickle, sqlite3) can be enabled at once; each request selects one via the `storage` query parameter (API) or radio switcher (web UI).
 
 Client, in turn, provides a simple terminal-based access
 to the RESTful API provided by the server.
@@ -49,19 +49,19 @@ python3 -m server
 You can additionally pass a one or more arguments to the server. The following table contains
 a list of available options with their default values and description.
 
-| Option                       | Allowed Arguments         | Default Value  | Description                                                 |
-|------------------------------|---------------------------|----------------|-------------------------------------------------------------|
-| `-h`, `--help`               | -                         | -              | show help                                                   |
-| `--web-url-prefix`           | `str`                     | `"/"`          | URL prefix of the web-app                                   |
-| `--api-url-prefix`           | `str`                     | `"/api"`       | URL prefix of the REST API                                  |
-| `--secret-filename`          | `str`                     | `"secret.key"` | filename of the secret key                                  |
-| `--secret-len`               | `int` in range [1, 2^16)  | `64`           | length of the secret key                                    |
-| `-p`, `--port`               | `int` in range [0, 2^16)  | `8000`         | port number                                                 |
-| `--host`                     | `str`                     | `"127.0.0.1"`  | host to bind to                                             |
-| `-s`, `--storage-type`       | `"pickle"` or `"sqlite3"` | `"pickle"`     | type of the storage to be used                              |
-| `--pickle-storage-dirname`   | `str`                     | `"db.pickle"`  | name of the directory pickle storage uses to store database |
-| `--sqlite3-storage-filename` | `str`                     | `"db.sqlite3"` | filename of the Sqlite3 database                            |
-| `-d`, `--debug`              | -                         | -              | enables debug mode                                          |
+| Option                       | Allowed Arguments         | Default Value      | Description                                                 |
+|------------------------------|---------------------------|--------------------|-------------------------------------------------------------|
+| `-h`, `--help`               | -                         | -                  | show help                                                   |
+| `--web-url-prefix`           | `str`                     | `"/"`              | URL prefix of the web-app                                   |
+| `--api-url-prefix`           | `str`                     | `"/api"`           | URL prefix of the REST API                                  |
+| `--secret-filename`          | `str`                     | `"secret.key"`     | filename of the secret key                                  |
+| `--secret-len`               | `int` in range [1, 2^16)  | `64`               | length of the secret key                                    |
+| `-p`, `--port`               | `int` in range [0, 2^16)  | `8000`             | port number                                                 |
+| `--host`                     | `str`                     | `"127.0.0.1"`      | host to bind to                                             |
+| `--enabled-storages`         | `str`                     | `"pickle,sqlite3"` | comma-separated list of enabled storage backends        |
+| `--pickle-storage-dirname`   | `str`                     | `"db.pickle"`      | name of the directory pickle storage uses to store database |
+| `--sqlite3-storage-filename` | `str`                     | `"db.sqlite3"`     | filename of the Sqlite3 database                            |
+| `-d`, `--debug`              | -                         | -                  | enables debug mode                                          |
 
 ### Client
 

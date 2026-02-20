@@ -1,36 +1,51 @@
 {% extends "base.jinja" %}
 
 {% block styles %}
-    {{ super() }}
-    <link rel="stylesheet" href="{{ url_for('static', filename = 'css/form.css'    ) }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename = 'css/messages.css') }}">
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename = 'css/form.css'    ) }}">
+<link rel="stylesheet" href="{{ url_for('static', filename = 'css/messages.css') }}">
 {% endblock %}
 
 {% block header %}
-    <h1>{{ title }}</h1>
+<h1>{{ title }}</h1>
 {% endblock %}
 
 {% block content %}
-    <main>
-        {% include "messages.jinja" %}
+<main>
+  {% include "messages.jinja" %}
 
-        <form class="with-border" action="{{ request.url }}" method="POST">
-            {% for attr in attrs.values() if not attr.readonly %}
-                <label>
-                    {{ attr.display_name }}
-                    <br>
-                    <input class="with-border"
-                           type="text"
-                           placeholder="{{ attr.placeholder }}"
-                           name="{{ attr.name }}"
-                           value="{{ attr.text_value }}">
-                </label>
-            {% endfor %}
+  {% if enabled_storages %}
+  <div class="storage section with-border" style="padding: 8px">
+    <h2>Storage</h2>
+    <div class="storage-switcher">
+      {% for s in enabled_storages %}
+      <label>
+        <input type="radio" name="storage" value="{{ s }}" {% if storage==s %}checked{% endif %} disabled>
+        {{ s }}
+      </label>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
 
-            <div class="actions">
-                <a class="button-like" href="{{ url_for('.index') }}">Cancel</a>
-                <input class="button-like" type="submit" value="{{ submit_text }}">
-            </div>
-        </form>
-    </main>
+  <form class="with-border" action="{{ request.url }}" method="POST">
+    {% if storage %}
+    <input type="hidden" name="storage" value="{{ storage }}">
+    {% endif %}
+    {% for attr in attrs.values() if not attr.readonly %}
+    <label>
+      {{ attr.display_name }}
+      <br>
+      <input class="with-border" type="text" placeholder="{{ attr.placeholder }}" name="{{ attr.name }}"
+        value="{{ attr.text_value }}">
+    </label>
+    {% endfor %}
+
+    <div class="actions">
+      <a class="button-like"
+        href="{{ url_for('.index', storage=storage) if storage else url_for('.index') }}">Cancel</a>
+      <input class="button-like" type="submit" value="{{ submit_text }}">
+    </div>
+  </form>
+</main>
 {% endblock %}

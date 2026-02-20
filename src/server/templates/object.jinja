@@ -1,15 +1,15 @@
 <table class="object with-border">
-    <tbody>
-        {% for attr in attrs.values() %}
-            <tr class="attr">
-                <td class="name">
-                    {{ attr.display_name }}
-                </td>
+  <tbody>
+    {% for attr in attrs.values() %}
+    <tr class="attr">
+      <td class="name">
+        {{ attr.display_name }}
+      </td>
 
-                <td class="value {{ 'zero' if attr.zero else '' }}">
-                    {{ attr.display_value }}
-                </td>
-            </tr>
-        {% endfor %}
-    </tbody>
+      <td class="value {{ 'zero' if attr.zero else '' }}">
+        {{ attr.display_value }}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
 </table>

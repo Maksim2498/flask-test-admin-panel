@@ -24,4 +24,6 @@ class WebDialog(TextDialog):
       attrs=attrs,
       title=kwargs.get("title"),
       submit_text=kwargs.get("submit_text"),
+      storage=kwargs.get("storage"),
+      enabled_storages=kwargs.get("enabled_storages", []),
     )
