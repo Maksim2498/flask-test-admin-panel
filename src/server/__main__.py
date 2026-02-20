@@ -90,8 +90,9 @@ config = create_config()
 multi_manager = create_multi_user_manager(config)
 app = create_app(config, multi_manager)
 
-app.run(
-  host=config.host,
-  port=config.port,
-  debug=config.debug,
-)
+if __name__ == "__main__":
+  app.run(
+    host=config.host,
+    port=config.port,
+    debug=config.debug,
+  )
