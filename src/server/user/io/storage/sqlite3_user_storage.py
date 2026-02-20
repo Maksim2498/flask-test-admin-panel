@@ -1,87 +1,83 @@
-from typing            import Iterable, cast, override
-from os.path           import dirname
+import sqlite3
+from collections.abc import Iterable
+from os.path import dirname
+from typing import cast, override
 
 from common.io.storage import Storage
-from common.user       import Admin, Moderator, User
-
-import sqlite3
-
+from common.user import Admin, Moderator, User
 
 __all__ = ["Sqlite3UserStorage"]
 
 
 class Sqlite3UserStorage(Storage[User]):
-    __database: str
+  __database: str
 
-    def __init__(self, database: str = "users.sqlite3"):
-        super().__init__()
+  def __init__(self, database: str = "users.sqlite3"):
+    super().__init__()
 
-        self.__database  = database
+    self.__database = database
 
-        schema_script_path = f"{dirname(__file__)}/schema.sql"
-        schema_script      = open(schema_script_path, "r").read()
+    schema_script_path = f"{dirname(__file__)}/schema.sql"
+    with open(schema_script_path) as f:
+      schema_script = f.read()
 
-        with self.__connect() as connection:
-            connection.executescript(schema_script)
+    with self.__connect() as connection:
+      connection.executescript(schema_script)
 
-    @property
-    def database(self) -> str:
-        return self.__database
+  @property
+  def database(self) -> str:
+    return self.__database
 
-    @override
-    def persist(self, obj: User) -> int:
-        return (
-            self.__insert(obj)
-            if obj.id < 0 else
-            self.__update(obj)
-        )
+  @override
+  def persist(self, obj: User) -> int:
+    return self.__insert(obj) if obj.id < 0 else self.__update(obj)
 
-    def __insert(self, user: User) -> int:
-        with self.__connect() as connection:
-            cursor = connection.cursor()
+  def __insert(self, user: User) -> int:
+    with self.__connect() as connection:
+      cursor = connection.cursor()
 
-            cursor.execute("BEGIN")
+      cursor.execute("BEGIN")
 
-            Sqlite3UserStorage.__insert_to_users(cursor, user)
+      Sqlite3UserStorage.__insert_to_users(cursor, user)
 
-            user._id = cast(int, cursor.lastrowid)
+      user._id = cast(int, cursor.lastrowid)
 
-            if isinstance(user, Moderator):
-                Sqlite3UserStorage.__insert_to_moderators(cursor, user)
-                Sqlite3UserStorage.__insert_verified_users(cursor, user)
+      if isinstance(user, Moderator):
+        Sqlite3UserStorage.__insert_to_moderators(cursor, user)
+        Sqlite3UserStorage.__insert_verified_users(cursor, user)
 
-            if isinstance(user, Admin):
-                Sqlite3UserStorage.__insert_to_admins(cursor, user)
-                Sqlite3UserStorage.__insert_created_pages(cursor, user)
+      if isinstance(user, Admin):
+        Sqlite3UserStorage.__insert_to_admins(cursor, user)
+        Sqlite3UserStorage.__insert_created_pages(cursor, user)
 
-            cursor.execute("COMMIT")
+      cursor.execute("COMMIT")
 
-            return user.id
+      return user.id
 
-    def __update(self, user: User) -> int:
-        with self.__connect() as connection:
-            cursor = connection.cursor()
+  def __update(self, user: User) -> int:
+    with self.__connect() as connection:
+      cursor = connection.cursor()
 
-            cursor.execute("BEGIN")
+      cursor.execute("BEGIN")
 
-            Sqlite3UserStorage.__update_user(cursor, user)
+      Sqlite3UserStorage.__update_user(cursor, user)
 
-            if isinstance(user, Moderator):
-                Sqlite3UserStorage.__delete_verified_users(cursor, user)
-                Sqlite3UserStorage.__insert_verified_users(cursor, user)
+      if isinstance(user, Moderator):
+        Sqlite3UserStorage.__delete_verified_users(cursor, user)
+        Sqlite3UserStorage.__insert_verified_users(cursor, user)
 
-            if isinstance(user, Admin):
-                Sqlite3UserStorage.__delete_created_pages(cursor, user)
-                Sqlite3UserStorage.__insert_created_pages(cursor, user)
+      if isinstance(user, Admin):
+        Sqlite3UserStorage.__delete_created_pages(cursor, user)
+        Sqlite3UserStorage.__insert_created_pages(cursor, user)
 
-            cursor.execute("COMMIT")
+      cursor.execute("COMMIT")
 
-            return user.id
+      return user.id
 
-    @staticmethod
-    def __update_user(cursor: sqlite3.Cursor, user: User):
-        cursor.execute(
-            """
+  @staticmethod
+  def __update_user(cursor: sqlite3.Cursor, user: User):
+    cursor.execute(
+      """
                 UPDATE
                     User
                 SET
@@ -90,79 +86,80 @@ class Sqlite3UserStorage(Storage[User]):
                 WHERE
                     id = ?
             """,
-            
-            (
-                user.login,
-                user.name,
-                user.id,
-            ),
-        )
+      (
+        user.login,
+        user.name,
+        user.id,
+      ),
+    )
 
-    @staticmethod
-    def __insert_to_users(cursor: sqlite3.Cursor, user: User):
-        cursor.execute("""
+  @staticmethod
+  def __insert_to_users(cursor: sqlite3.Cursor, user: User):
+    cursor.execute(
+      """
             INSERT INTO
                 User (login, name)
             VALUES
                 (?, ?)
-        """, (user.login, user.name))
+        """,
+      (user.login, user.name),
+    )
 
-    @staticmethod
-    def __insert_to_moderators(cursor: sqlite3.Cursor, moderator: Moderator):
-        cursor.execute("INSERT INTO Moderator (id) VALUES (?)", (moderator.id,))
+  @staticmethod
+  def __insert_to_moderators(cursor: sqlite3.Cursor, moderator: Moderator):
+    cursor.execute("INSERT INTO Moderator (id) VALUES (?)", (moderator.id,))
 
-    @staticmethod
-    def __insert_to_admins(cursor: sqlite3.Cursor, admin: Admin):
-        cursor.execute("INSERT INTO Admin (id) VALUES (?)", (admin.id,))
+  @staticmethod
+  def __insert_to_admins(cursor: sqlite3.Cursor, admin: Admin):
+    cursor.execute("INSERT INTO Admin (id) VALUES (?)", (admin.id,))
 
-    @staticmethod
-    def __delete_verified_users(cursor: sqlite3.Cursor, moderator: Moderator):
-        cursor.execute("DELETE FROM VerifiedUser WHERE moderator_id = ?", (moderator.id,))
+  @staticmethod
+  def __delete_verified_users(cursor: sqlite3.Cursor, moderator: Moderator):
+    cursor.execute("DELETE FROM VerifiedUser WHERE moderator_id = ?", (moderator.id,))
 
-    @staticmethod
-    def __insert_verified_users(cursor: sqlite3.Cursor, moderator: Moderator):
-        cursor.executemany(
-            """
+  @staticmethod
+  def __insert_verified_users(cursor: sqlite3.Cursor, moderator: Moderator):
+    cursor.executemany(
+      """
                 INSERT INTO
                     VerifiedUser (moderator_id, user_login)
                 VALUES
                     (?, ?)
             """,
+      map(
+        lambda verified_user: (moderator.id, verified_user),
+        moderator._verified_users,
+      ),
+    )
 
-            map(
-                lambda verified_user: (moderator.id, verified_user),
-                moderator._verified_users,
-            ),
-        )
+  @staticmethod
+  def __delete_created_pages(cursor: sqlite3.Cursor, admin: Admin):
+    cursor.execute("DELETE FROM CreatedPage WHERE admin_id = ?", (admin.id,))
 
-    @staticmethod
-    def __delete_created_pages(cursor: sqlite3.Cursor, admin: Admin):
-        cursor.execute("DELETE FROM CreatedPage WHERE admin_id = ?", (admin.id,))
-
-    @staticmethod
-    def __insert_created_pages(cursor: sqlite3.Cursor, admin: Admin):
-        cursor.executemany(
-            """
+  @staticmethod
+  def __insert_created_pages(cursor: sqlite3.Cursor, admin: Admin):
+    cursor.executemany(
+      """
                 INSERT INTO
                     CreatedPage (admin_id, name)
                 VALUES
                     (?, ?)
             """,
+      map(
+        lambda page: (admin.id, page),
+        admin._created_pages,
+      ),
+    )
 
-            map(
-                lambda page: (admin.id, page),
-                admin._created_pages,
-            ),
-        )
+  @override
+  def load(self, user_id: int) -> User | None:
+    with self.__connect() as connection:
+      cursor = connection.cursor()
 
-    @override
-    def load(self, user_id: int) -> User | None:
-        with self.__connect() as connection:
-            cursor = connection.cursor()
+      cursor.execute("BEGIN")
 
-            cursor.execute("BEGIN")
-
-            cursor.execute("""
+      cursor.execute(
+        """
                 SELECT
                     u.id as user_id,
                     m.id as moderator_id,
@@ -177,93 +174,101 @@ class Sqlite3UserStorage(Storage[User]):
                     u.id = a.id
                 WHERE
                     u.id = ?
-            """, (user_id,))
+            """,
+        (user_id,),
+      )
 
-            row = cursor.fetchone()
+      row = cursor.fetchone()
 
-            if row is None:
-                return None
+      if row is None:
+        return None
 
-            _, moderator_id, admin_id, login, name = row
+      _, moderator_id, admin_id, login, name = row
 
-            user: User | None = None
+      user: User | None = None
 
-            if admin_id is not None:
-                user = Admin()
+      if admin_id is not None:
+        user = Admin()
 
-                cursor.execute("""
+        cursor.execute(
+          """
                     SELECT
                         name
                     FROM
                         CreatedPage
                     WHERE
                         admin_id = ?
-                """, (admin_id,))
+                """,
+          (admin_id,),
+        )
 
-                rows  = cursor.fetchall()
-                pages = map(lambda entry: entry[0], rows)
+        rows = cursor.fetchall()
+        pages = map(lambda entry: entry[0], rows)
 
-                user._created_pages = frozenset(pages)
+        user._created_pages = frozenset(pages)
 
-            if moderator_id is not None:
-                if user is None:
-                    user = Moderator()
+      if moderator_id is not None:
+        if user is None:
+          user = Moderator()
 
-                cursor.execute("""
+        cursor.execute(
+          """
                     SELECT
                         user_login
                     FROM
                         VerifiedUser
                     WHERE
                         moderator_id = ?
-                """, (moderator_id,))
+                """,
+          (moderator_id,),
+        )
 
-                rows  = cursor.fetchall()
-                users = map(lambda entry: entry[0], rows)
+        rows = cursor.fetchall()
+        users = map(lambda entry: entry[0], rows)
 
-                cast(Moderator, user)._verified_users = frozenset(users)
-                
-            if user is None:
-                user = User()
+        cast(Moderator, user)._verified_users = frozenset(users)
 
-            user._id    = user_id
-            user._login = login
-            user._name  = name
+      if user is None:
+        user = User()
 
-            cursor.execute("COMMIT")
+      user._id = user_id
+      user._login = login
+      user._name = name
 
-            return user
+      cursor.execute("COMMIT")
 
-    @override
-    def load_all_ids(self) -> Iterable[int]:
-        with self.__connect() as connection:
-            cursor = connection.execute("SELECT id FROM User")
-            rows   = cursor.fetchall()
-            ids    = map(lambda entry: entry[0], rows)
+      return user
 
-            return ids
+  @override
+  def load_all_ids(self) -> Iterable[int]:
+    with self.__connect() as connection:
+      cursor = connection.execute("SELECT id FROM User")
+      rows = cursor.fetchall()
+      ids = map(lambda entry: entry[0], rows)
 
-    @override
-    def count(self) -> int:
-        with self.__connect() as connection:
-            cursor = connection.execute("SELECT COUNT(*) FROM User")
-            row    = cursor.fetchone()
-            count  = row[0]
+      return ids
 
-            return count
+  @override
+  def count(self) -> int:
+    with self.__connect() as connection:
+      cursor = connection.execute("SELECT COUNT(*) FROM User")
+      row = cursor.fetchone()
+      count = row[0]
 
-    @override
-    def delete(self, user_id: int) -> bool:
-        with self.__connect() as connection:
-            cursor  = connection.execute("DELETE FROM User WHERE id = ?", (user_id,))
-            deleted = cursor.rowcount != 0
+      return count
 
-            return deleted
+  @override
+  def delete(self, user_id: int) -> bool:
+    with self.__connect() as connection:
+      cursor = connection.execute("DELETE FROM User WHERE id = ?", (user_id,))
+      deleted = cursor.rowcount != 0
 
-    @override
-    def delete_all(self):
-        with self.__connect() as connection:
-            connection.execute("DELETE FROM User")
+      return deleted
 
-    def __connect(self) -> sqlite3.Connection:
-        return sqlite3.connect(self.__database, isolation_level = None)
+  @override
+  def delete_all(self):
+    with self.__connect() as connection:
+      connection.execute("DELETE FROM User")
+
+  def __connect(self) -> sqlite3.Connection:
+    return sqlite3.connect(self.__database, isolation_level=None)

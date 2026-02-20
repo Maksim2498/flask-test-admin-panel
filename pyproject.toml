@@ -1,0 +1,43 @@
+[project]
+name = "admin-panel"
+version = "0.1.0"
+description = "Educational CRUD project with Flask"
+requires-python = ">=3.12"
+dependencies = [
+  "Flask==3.0.1",
+  "requests==2.31.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "ruff>=0.8.0",
+]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 120
+indent-width = 2
+src = ["src"]
+
+[tool.ruff.lint]
+select = [
+    "E",      # pycodestyle errors
+    "W",      # pycodestyle warnings
+    "F",      # Pyflakes
+    "I",      # isort
+    "B",      # flake8-bugbear
+    "UP",     # pyupgrade
+]
+ignore = [
+    "E501",   # line too long (handled by formatter)
+    "F401",   # unused imports (often intentional in __init__.py)
+    "F403",   # import * (used for package re-exports)
+    "C417",   # unnecessary map (style preference)
+    "UP040",  # TypeAlias vs type keyword
+    "UP046",  # Generic vs type parameters
+    "UP047",  # generic type parameters
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"

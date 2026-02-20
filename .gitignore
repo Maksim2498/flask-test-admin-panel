@@ -7,9 +7,12 @@ db.sqlite3
 .vscode/
 
 # Python
+.venv/
 __pycache__/
 *.py[cod]
 *$py.class
+.ruff_cache/
+*.egg-info/
 
 # MyPy
 .mypy_cache/

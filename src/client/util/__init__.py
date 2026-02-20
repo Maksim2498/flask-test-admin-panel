@@ -1,3 +1,2 @@
-from .              import cli
-
+from . import cli
 from .validate_json import *

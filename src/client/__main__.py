@@ -1,23 +1,23 @@
-from typing           import Sequence
-
-from .io.dialog       import CliDialog
-from .user.io.storage import RestUserStorage
-from .arg_parser      import arg_parser
-from .config          import Config
-from .menu            import Menu
-
 import sys
+from collections.abc import Sequence
+
+from .arg_parser import arg_parser
+from .config import Config
+from .io.dialog import CliDialog
+from .menu import Menu
+from .user.io.storage import RestUserStorage
 
 
 def create_config(args: Sequence[str] = sys.argv[1:]) -> Config:
-    parsed_args = arg_parser.parse_args(args)
-    config      = Config(**parsed_args.__dict__)
+  parsed_args = arg_parser.parse_args(args)
+  config = Config(**parsed_args.__dict__)
 
-    return config
+  return config
 
-config  = create_config()
-dialog  = CliDialog()
+
+config = create_config()
+dialog = CliDialog()
 storage = RestUserStorage(config.address)
-menu    = Menu(dialog, storage)
+menu = Menu(dialog, storage)
 
 menu.run()
