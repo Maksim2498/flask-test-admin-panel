@@ -78,6 +78,13 @@ arg_parser.add_argument(
 )
 
 arg_parser.add_argument(
+  "--host",
+  default=Config.host,
+  metavar="<host>",
+  help=f"host to bind to (default value is {repr(Config.host)})",
+)
+
+arg_parser.add_argument(
   "-s",
   "--storage-type",
   default=Config.storage_type,

@@ -72,6 +72,7 @@ user_manager = create_user_manager(config)
 app = create_app(config, user_manager)
 
 app.run(
+  host=config.host,
   port=config.port,
   debug=config.debug,
 )

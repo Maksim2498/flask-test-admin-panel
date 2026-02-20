@@ -17,6 +17,7 @@ class Config:
   secret_filename: str = "secret.key"
   secret_len: int = 64
   port: int = 8000
+  host: str = "127.0.0.1"
   storage_type: StorageType = "pickle"
   pickle_storage_dirname: str = "db.pickle"
   sqlite3_storage_filename: str = "db.sqlite3"
