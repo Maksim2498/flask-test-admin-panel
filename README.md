@@ -58,7 +58,7 @@ a list of available options with their default values and description.
 | `--secret-len`               | `int` in range [1, 2^16)  | `64`               | length of the secret key                                    |
 | `-p`, `--port`               | `int` in range [0, 2^16)  | `8000`             | port number                                                 |
 | `--host`                     | `str`                     | `"127.0.0.1"`      | host to bind to                                             |
-| `--enabled-storages`         | `str`                     | `"pickle,sqlite3"` | comma-separated list of enabled storage backends        |
+| `--enabled-storages`         | `str`                     | `"pickle,sqlite3"` | comma-separated list of enabled storage backends            |
 | `--pickle-storage-dirname`   | `str`                     | `"db.pickle"`      | name of the directory pickle storage uses to store database |
 | `--sqlite3-storage-filename` | `str`                     | `"db.sqlite3"`     | filename of the Sqlite3 database                            |
 | `-d`, `--debug`              | -                         | -                  | enables debug mode                                          |

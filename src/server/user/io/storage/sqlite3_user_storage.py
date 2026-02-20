@@ -78,14 +78,14 @@ class Sqlite3UserStorage(Storage[User]):
   def __update_user(cursor: sqlite3.Cursor, user: User):
     cursor.execute(
       """
-                UPDATE
-                    User
-                SET
-                    login = ?,
-                    name  = ?
-                WHERE
-                    id = ?
-            """,
+        UPDATE
+          User
+        SET
+          login = ?,
+          name  = ?
+        WHERE
+          id = ?
+      """,
       (
         user.login,
         user.name,
@@ -97,11 +97,11 @@ class Sqlite3UserStorage(Storage[User]):
   def __insert_to_users(cursor: sqlite3.Cursor, user: User):
     cursor.execute(
       """
-            INSERT INTO
-                User (login, name)
-            VALUES
-                (?, ?)
-        """,
+        INSERT INTO
+          User (login, name)
+        VALUES
+          (?, ?)
+      """,
       (user.login, user.name),
     )
 
@@ -121,11 +121,11 @@ class Sqlite3UserStorage(Storage[User]):
   def __insert_verified_users(cursor: sqlite3.Cursor, moderator: Moderator):
     cursor.executemany(
       """
-                INSERT INTO
-                    VerifiedUser (moderator_id, user_login)
-                VALUES
-                    (?, ?)
-            """,
+        INSERT INTO
+          VerifiedUser (moderator_id, user_login)
+        VALUES
+          (?, ?)
+      """,
       map(
         lambda verified_user: (moderator.id, verified_user),
         moderator._verified_users,
@@ -140,11 +140,11 @@ class Sqlite3UserStorage(Storage[User]):
   def __insert_created_pages(cursor: sqlite3.Cursor, admin: Admin):
     cursor.executemany(
       """
-                INSERT INTO
-                    CreatedPage (admin_id, name)
-                VALUES
-                    (?, ?)
-            """,
+        INSERT INTO
+          CreatedPage (admin_id, name)
+        VALUES
+          (?, ?)
+      """,
       map(
         lambda page: (admin.id, page),
         admin._created_pages,
@@ -160,21 +160,21 @@ class Sqlite3UserStorage(Storage[User]):
 
       cursor.execute(
         """
-                SELECT
-                    u.id as user_id,
-                    m.id as moderator_id,
-                    a.id as admin_id,
-                    u.login,
-                    u.name
-                FROM
-                    User u
-                LEFT JOIN Moderator m ON
-                    u.id = m.id
-                LEFT JOIN Admin a ON
-                    u.id = a.id
-                WHERE
-                    u.id = ?
-            """,
+          SELECT
+            u.id as user_id,
+            m.id as moderator_id,
+            a.id as admin_id,
+            u.login,
+            u.name
+          FROM
+            User u
+          LEFT JOIN Moderator m ON
+            u.id = m.id
+          LEFT JOIN Admin a ON
+            u.id = a.id
+          WHERE
+            u.id = ?
+        """,
         (user_id,),
       )
 
@@ -192,13 +192,13 @@ class Sqlite3UserStorage(Storage[User]):
 
         cursor.execute(
           """
-                    SELECT
-                        name
-                    FROM
-                        CreatedPage
-                    WHERE
-                        admin_id = ?
-                """,
+            SELECT
+              name
+            FROM
+              CreatedPage
+            WHERE
+              admin_id = ?
+          """,
           (admin_id,),
         )
 
@@ -213,13 +213,13 @@ class Sqlite3UserStorage(Storage[User]):
 
         cursor.execute(
           """
-                    SELECT
-                        user_login
-                    FROM
-                        VerifiedUser
-                    WHERE
-                        moderator_id = ?
-                """,
+            SELECT
+              user_login
+            FROM
+              VerifiedUser
+            WHERE
+              moderator_id = ?
+          """,
           (moderator_id,),
         )
 
